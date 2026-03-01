@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "controle-publicacoes-dev",
+    "production": "controle-publicacoes-prod"
+  }
+}

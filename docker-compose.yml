@@ -1,0 +1,35 @@
+version: '3.8'
+
+# Local development: Firebase Emulator Suite
+# Usage: docker-compose up -d
+# Firestore UI: http://localhost:4000
+
+services:
+  firebase-emulator:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./firebase.json:/app/firebase.json:ro
+      - ./.firebaserc:/app/.firebaserc:ro
+      - firebase_data:/app/.firebase
+    ports:
+      - '4000:4000'   # Emulator UI
+      - '8080:8080'   # Firestore
+      - '9099:9099'   # Auth
+      - '5001:5001'   # Functions (se necessário)
+    environment:
+      - FIREBASE_TOKEN=${FIREBASE_TOKEN:-}
+    command: >
+      sh -c "npm install -g firebase-tools &&
+             firebase emulators:start
+               --only firestore,auth
+               --project demo-controle-publicacoes
+               --host 0.0.0.0"
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:4000']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  firebase_data:
